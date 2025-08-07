@@ -6,7 +6,7 @@ edition = "2024"
 authors = ["Marley <marley@marlstar.com>"]
 homepage = "https://github.com/Marlstar/scrobbled"
 repository = "https://github.com/Marlstar/scrobbled"
-keywords = ["lastfm", "last.fm", "fm", "scrobble"]
+keywords = ["lastfm", "fm", "scrobble"]
 license = "MIT"
 
 [dependencies]
