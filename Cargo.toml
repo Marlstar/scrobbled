@@ -1,7 +1,13 @@
 [package]
 name = "scrobbled"
+description = "Rust bindings for the Last.fm API"
 version = "0.1.0"
 edition = "2024"
+authors = ["Marley <marley@marlstar.com>"]
+homepage = "https://github.com/Marlstar/scrobbled"
+repository = "https://github.com/Marlstar/scrobbled"
+keywords = ["lastfm", "last.fm", "fm", "scrobble"]
+license = "MIT"
 
 [dependencies]
 async-channel = "2.5.0"
