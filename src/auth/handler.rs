@@ -3,6 +3,7 @@ use axum::response::Html;
 use axum::extract::Query;
 use async_channel::{unbounded, Sender};
 use crate::secrets::get_api_key;
+use super::OAuthToken;
 use super::OAuthError;
 
 pub struct OAuthHandler {
@@ -11,7 +12,7 @@ pub struct OAuthHandler {
 impl OAuthHandler {
     pub fn builder() -> OAuthHandlerBuilder { OAuthHandlerBuilder::default() }
 
-    pub async fn auth(&self) -> Result<String, OAuthError> {
+    pub async fn auth(&self) -> Result<OAuthToken, OAuthError> {
         let (tx, rx) = unbounded::<String>();
 
         let listener = tokio::net::TcpListener::bind(format!("0.0.0.0:{}", self.server_port)).await?;
@@ -22,7 +23,7 @@ impl OAuthHandler {
 
         tokio::select! {
             _ = ws => { Err(OAuthError::WebserverFailed) },
-            token = rx.recv() => Ok(token.unwrap())
+            token = rx.recv() => Ok(OAuthToken(token.unwrap()))
         }
     }
 
