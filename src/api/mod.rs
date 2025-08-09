@@ -6,13 +6,10 @@ pub mod auth;
 
 pub type APIResult<T> = Result<T, APIError>;
 
-#[derive(Debug)]
+#[derive(Debug, from_variants::FromVariants)]
 pub enum APIError {
     ResponseNotOK(u16),
     Deserialisation(serde_json::Error),
-}
-impl From<serde_json::Error> for APIError {
-    fn from(value: serde_json::Error) -> Self { Self::Deserialisation(value) }
 }
 
 #[macro_export]
@@ -28,7 +25,8 @@ macro_rules! run {
         let result = $ws.execute($ws.$reqtype(req).build().unwrap()).await.unwrap();
         let status_code = result.status().as_u16();
         let out: $crate::api::APIResult<$crate::api::$namespace::$method::$outtype> = if status_code == 200 {
-            Ok(serde_json::from_str(&result.text().await.unwrap())?)
+            serde_json::from_str(&result.text().await.unwrap())
+                .map_err($crate::api::APIError::Deserialisation)
         } else {
             Err($crate::api::APIError::ResponseNotOK(status_code))
         };
