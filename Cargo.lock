@@ -1025,6 +1025,7 @@ dependencies = [
  "open",
  "reqwest",
  "serde",
+ "serde_json",
  "tokio",
 ]
 
