@@ -5,28 +5,17 @@ use crate::api;
 
 #[derive(Debug)]
 pub struct Session {
-    token: OAuthToken,
-    session: Option<SessionToken>,
+    token: SessionToken,
     ws: Client,
 }
 impl Session {
-    pub async fn new(token: OAuthToken) -> reqwest::Result<Self>  {
+    pub async fn new(token: OAuthToken) -> SessionResult<Self> {
+        let ws = Client::builder().build()?;
+        let token = SessionToken(api::run!(auth, get_session, GetSession, get, &ws, &token).await?.session.key);
         Ok(Self {
             token,
-            session: None,
-            ws: Client::builder().build()?,
+            ws,
         })
-    }
-
-    pub async fn start(&mut self) -> api::APIResult<()> {
-        let session_token = match api::run!(auth, get_session, GetSession, get, &self.ws, &self.token).await {
-            Ok(gs) => SessionToken(gs.session.key),
-            Err(APIError::ResponseNotOK(code)) => todo!("handle non-ok api results"),
-            Err(APIError::Deserialisation(e)) => todo!("handle deserialisation errors"),
-        };
-        println!("Session token: {session_token}");
-        self.session = Some(session_token);
-        Ok(())
     }
 }
 
@@ -37,3 +26,17 @@ impl std::fmt::Display for SessionToken {
         write!(f, "{}", self.0)
     }
 }
+
+#[derive(Debug)]
+pub enum SessionError {
+    Reqwest(reqwest::Error),
+    API(APIError),
+}
+impl From<reqwest::Error> for SessionError {
+    fn from(value: reqwest::Error) -> Self { Self::Reqwest(value) }
+}
+impl From<APIError> for SessionError {
+    fn from(value: APIError) -> Self { Self::API(value) }
+}
+
+pub type SessionResult<T> = Result<T, SessionError>;

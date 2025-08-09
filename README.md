@@ -26,8 +26,7 @@ This will open a tab in the user's default browser requesting permission to acce
 Once we have a token, to get a session and start interacting with the API, create a `Session`:
 ```rust
 use scrobbled::Session;
-let mut session = Session::new(token).await.unwrap();
-// Get a session key
-session.start().await.unwrap();
+// Get a session token using the (single-use) auth token
+let session = Session::new(token).await.unwrap();
 // Ready to go =)
 ```
