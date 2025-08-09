@@ -4,14 +4,8 @@ mod args; pub use args::Args;
 
 pub mod auth;
 
-pub type APIResult<T> = Result<T, APIError>;
-
-#[derive(Debug, from_variants::FromVariants)]
-pub enum APIError {
-    ResponseNotOK(u16),
-    Deserialisation(serde_json::Error),
-    Reqwest(reqwest::Error),
-}
+mod error;
+pub use error::{APIError, APIResult};
 
 #[macro_export]
 macro_rules! run {

@@ -27,16 +27,10 @@ impl std::fmt::Display for SessionToken {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, from_variants::FromVariants)]
 pub enum SessionError {
     Reqwest(reqwest::Error),
     API(APIError),
-}
-impl From<reqwest::Error> for SessionError {
-    fn from(value: reqwest::Error) -> Self { Self::Reqwest(value) }
-}
-impl From<APIError> for SessionError {
-    fn from(value: APIError) -> Self { Self::API(value) }
 }
 
 pub type SessionResult<T> = Result<T, SessionError>;
