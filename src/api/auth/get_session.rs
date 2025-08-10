@@ -10,17 +10,9 @@ pub fn get_session(token: &OAuthToken) -> String {
         .build()
 }
 
-pub use deserialise::GetSession;
-mod deserialise {
-    #[derive(serde::Deserialize, Debug)]
-    pub struct GetSession {
-        pub session: Session,
-    }
-
-    #[derive(serde::Deserialize, Debug)]
-    pub struct Session {
-        pub name: String,
-        pub key: String,
-        pub subscriber: usize,
-    }
+#[derive(serde::Deserialize, Debug)]
+pub struct Session {
+    pub name: String,
+    pub key: String,
+    pub subscriber: usize,
 }

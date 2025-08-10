@@ -6,7 +6,7 @@ pub enum APIError {
     ResponseNotOK(u16),
 
     #[error("failed to deserialise API response")]
-    Deserialisation(serde_json::Error),
+    Deserialisation(serde_xml_rs::Error),
 
     #[error("failed to communicate with the API")]
     Reqwest(reqwest::Error),

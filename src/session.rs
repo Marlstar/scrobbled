@@ -1,6 +1,6 @@
 use reqwest::Client;
 use crate::auth::OAuthToken;
-use crate::api::APIError;
+use crate::api::{APIError, ErrorResponse};
 use crate::api;
 
 #[derive(Debug)]
@@ -11,7 +11,7 @@ pub struct Session {
 impl Session {
     pub async fn new(token: OAuthToken) -> SessionResult<Self> {
         let ws = Client::builder().build()?;
-        let token = SessionToken(api::run!(auth, get_session, GetSession, get, &ws, &token).await?.session.key);
+        let token = SessionToken(api::run!(auth, get_session, Session, get, &ws, &token).await??.key);
         Ok(Self {
             token,
             ws,
@@ -31,6 +31,7 @@ impl std::fmt::Display for SessionToken {
 pub enum SessionError {
     Reqwest(reqwest::Error),
     API(APIError),
+    Response(ErrorResponse),
 }
 
 pub type SessionResult<T> = Result<T, SessionError>;
