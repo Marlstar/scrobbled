@@ -30,3 +30,22 @@ use scrobbled::Session;
 let session = Session::new(token).await.unwrap();
 // Ready to go =)
 ```
+
+## Scrobbling
+Once authenticated, we can scrobble songs to the authenticated user's account. To do so, create a `Scrobble`:
+```rust
+use scrobbled::Scrobble;
+let scrobble = Scrobble {
+    track: "In the End".to_string(),
+    artist: "Linkin Park".to_string(),
+    album: Some("Hybrid Theory".to_string()),
+    timestamp: scrobbled::chrono::Local::now(),
+};
+```
+To send this to Last.fm, pass your `Scrobble` to the `Session`:
+```rust
+let result = session.scrobble(&scrobble).await.unwrap();
+println!("{result:?}"); // scrobble result information
+```
+If we now go over to Last.fm, we should see a successful scrobble!
+<img src="assets/lastfm_successful_scrobble.png" width=250px>
