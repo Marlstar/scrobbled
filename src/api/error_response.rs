@@ -3,6 +3,7 @@ use serde::Deserialize;
 
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename = "error")]
+/// API returned an error but the request was successful
 pub struct ErrorResponse {
     #[serde(rename = "@code", deserialize_with = "usize_to_error_code")]
     pub code: APIErrorCode,

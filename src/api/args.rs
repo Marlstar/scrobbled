@@ -34,6 +34,7 @@ impl Args {
         self
     }
 
+    /// Push a value, if `Some`
     pub fn push_maybe(&mut self, k: Key, v: Option<impl ToString>) -> &mut Self {
         if let Some(val) = v {
             self.push(k, val)

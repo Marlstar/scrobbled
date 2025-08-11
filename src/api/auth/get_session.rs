@@ -10,11 +10,14 @@ pub fn get_session(token: &OAuthToken) -> String {
         .build()
 }
 
+/// The API response for `auth.getsession`
 #[derive(serde::Deserialize, Debug)]
 #[allow(dead_code)]
 pub struct Session {
     #[serde(rename = "name")]
+    /// Last.fm username
     pub username: String,
+    /// Session key
     pub key: String,
     pub subscriber: usize,
 }

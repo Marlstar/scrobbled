@@ -5,6 +5,8 @@ use crate::Scrobble;
 use crate::api::track::scrobble::Scrobbles;
 
 #[derive(Debug)]
+/// The main handler for Last.fm API interaction.
+/// This is where almost all external crate interaction happens.
 pub struct Session {
     token: SessionToken,
     ws: Client,
@@ -19,12 +21,14 @@ impl Session {
         })
     }
     
+    /// Scrobble a song to the authenticated user's Last.fm account
     pub async fn scrobble(&self, scrobble: &Scrobble) -> SessionResult<Scrobbles> {
         Ok(api::run!(track, scrobble, Scrobbles, post, &self.ws, scrobble, &self.token).await?)
     }
 }
 
 #[derive(Debug, Clone)]
+/// A session token for a user
 pub struct SessionToken(pub String);
 impl std::fmt::Display for SessionToken {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -34,9 +38,10 @@ impl std::fmt::Display for SessionToken {
 
 #[derive(Debug, from_variants::FromVariants)]
 pub enum SessionError {
+    /// Error communicating with the API endpoint
     Reqwest(reqwest::Error),
+    /// Error with the API itself
     API(APIError),
-    Response(ErrorResponse),
 }
 
 pub type SessionResult<T> = Result<T, SessionError>;

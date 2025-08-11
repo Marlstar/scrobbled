@@ -3,15 +3,19 @@ pub type APIResult<T> = Result<T, APIError>;
 #[derive(Debug, from_variants::FromVariants, thiserror::Error)]
 pub enum APIError {
     #[error("API request did not return a 200 OK")]
+    /// API request did not return a 200 OK
     ResponseNotOK(u16),
 
     #[error("failed to deserialise API response")]
+    /// Failed to deserialise API response
     Deserialisation(serde_xml_rs::Error),
 
     #[error("failed to communicate with the API")]
+    /// Failed to communicate with the API
     Reqwest(reqwest::Error),
 
     #[error("API returned an error")]
+    /// API returned an error
     ErrorResponse(crate::api::ErrorResponse),
 }
 

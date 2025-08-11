@@ -15,6 +15,7 @@ pub fn scrobble(scrobble: &ActualScrobble, session: &SessionToken) -> String {
         .build()
 }
 
+/// A collection of `ScrobbleResult`s
 #[derive(Debug, serde::Deserialize)]
 pub struct Scrobbles {
     #[serde(rename = "@accepted")] pub accepted_count: usize,
@@ -22,6 +23,7 @@ pub struct Scrobbles {
     #[serde(rename = "scrobble")] pub scrobbles: Vec<ScrobbleResult>,
 }
 
+/// The API response for a scrobble
 #[derive(Debug, serde::Deserialize)]
 #[serde(rename = "scrobble")]
 pub struct ScrobbleResult {
