@@ -6,7 +6,7 @@ pub mod auth;
 pub mod track;
 
 mod error;
-pub use error::{APIError, APIErrorCode, APIResult};
+pub use error::{APIError, APIResult};
 
 mod error_response;
 pub use error_response::ErrorResponse;

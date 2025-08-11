@@ -22,6 +22,7 @@ impl Signature {
         Self(BTreeMap::new())
     }
 
+    #[allow(dead_code)]
     pub fn push(&mut self, key: &'static str, value: String) -> &mut Self {
         self.0.insert(key, value);
         self
@@ -42,6 +43,7 @@ impl Signature {
         return format!("{:x}", md5::compute(&sig));
     }
 
+    #[allow(dead_code)]
     pub fn args(&self) -> Vec<Arg> {
         self.0.iter().map(|(k,v)| (*k, v.clone())).collect()
     }

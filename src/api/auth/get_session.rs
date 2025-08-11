@@ -11,6 +11,7 @@ pub fn get_session(token: &OAuthToken) -> String {
 }
 
 #[derive(serde::Deserialize, Debug)]
+#[allow(dead_code)]
 pub struct Session {
     #[serde(rename = "name")]
     pub username: String,
