@@ -10,4 +10,7 @@ pub enum APIError {
 
     #[error("failed to communicate with the API")]
     Reqwest(reqwest::Error),
+
+    #[error("API returned an error")]
+    ErrorResponse(crate::api::ErrorResponse),
 }

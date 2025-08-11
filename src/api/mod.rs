@@ -3,6 +3,7 @@ mod signature; pub use signature::Signature;
 mod args; pub use args::Args;
 
 pub mod auth;
+pub mod track;
 
 mod error;
 pub use error::{APIError, APIResult};
@@ -16,9 +17,9 @@ pub use lfm::{Lfm, Status as LfmStatus};
 pub type Response<T> = Result<T, ErrorResponse>;
 
 #[macro_export]
-macro_rules! run {
-    ($namespace:ident, $method:ident, $outtype:ident, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {{
-        let __inner__ = async || -> $crate::api::APIResult<$crate::api::Response<$crate::api::$namespace::$method::$outtype>> {
+macro_rules! run_with_type {
+    ($namespace:ident, $method:ident, $sertype:path, $outtype:path, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {{
+        let __inner__ = async || -> $crate::api::APIResult<$outtype> {
             let req = format!(
                 // raw=true removes the wrapper xml element showing the status
                 "{}?{}",
@@ -26,27 +27,38 @@ macro_rules! run {
                 $crate::api::$namespace::$method::$method($($arg),+)
             );
 
-            let result = $ws.execute($ws.$reqtype(req).build()?).await?;
+            let req = $ws.$reqtype(req)
+                .header("content-length", 0)
+                .build()?;
+            let result = $ws.execute(req).await?;
             let status_code = result.status().as_u16();
 
-            let out: $crate::api::APIResult<$crate::api::Response<$crate::api::$namespace::$method::$outtype>> = if status_code == 200 {
-                let text = result.text().await?;
+            let text = result.text().await?;
+
+            if status_code == 200 {
+                // let text = result.text().await?;
                 let (wrapper, content) = $crate::api::remove_wrapper(&text);
 
-                let output: $crate::api::Response<$crate::api::$namespace::$method::$outtype> = match serde_xml_rs::from_str::<$crate::api::Lfm>(&wrapper)?.status {
-                    $crate::api::LfmStatus::Ok => Ok(serde_xml_rs::from_str::<$crate::api::$namespace::$method::$outtype>(&content)?),
+                let output: $crate::api::Response<$sertype> = match serde_xml_rs::from_str::<$crate::api::Lfm>(&wrapper)?.status {
+                    $crate::api::LfmStatus::Ok => Ok(serde_xml_rs::from_str::<$sertype>(&content)?),
                     $crate::api::LfmStatus::Failed => Err(serde_xml_rs::from_str::<$crate::api::ErrorResponse>(&content)?)
                 };
-                return Ok(output);
+                return Ok(output?);
             } else {
                 // TODO: map these codes into an enum
-                Err($crate::api::APIError::ResponseNotOK(status_code))
-            };
-            out
+                return Err($crate::api::APIError::ResponseNotOK(status_code));
+            }
         };
         __inner__()
-    }
-}} pub use run;
+    }};
+} pub use run_with_type;
+
+#[macro_export]
+macro_rules! run {
+    ($namespace:ident, $method:ident, $outtype:path, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {
+        $crate::api::run_with_type!($namespace, $method, $outtype, $outtype, $reqtype, $ws $(,$arg)*)
+    };
+} pub use run;
 
 pub fn remove_wrapper(text: &str) -> (String, String) {
     let mut lines = text.lines().skip(1);

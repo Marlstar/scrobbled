@@ -34,6 +34,12 @@ impl Args {
         self
     }
 
+    pub fn push_maybe(&mut self, k: Key, v: Option<impl ToString>) -> &mut Self {
+        if let Some(val) = v {
+            self.push(k, val)
+        } else { self }
+    }
+
     pub fn build(&self) -> String {
         return self.0.iter()
             .map(|(k,v)| format!("{k}={v}"))
