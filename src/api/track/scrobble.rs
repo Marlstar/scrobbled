@@ -17,9 +17,9 @@ pub fn scrobble(scrobble: &ActualScrobble, session: &SessionToken) -> String {
 
 #[derive(Debug, serde::Deserialize)]
 pub struct Scrobbles {
-    #[serde(rename = "@accepted")] accepted_count: usize,
-    #[serde(rename = "@ignored")] ignored_count: usize,
-    #[serde(rename = "scrobble")] scrobbles: Vec<ScrobbleResult>,
+    #[serde(rename = "@accepted")] pub accepted_count: usize,
+    #[serde(rename = "@ignored")] pub ignored_count: usize,
+    #[serde(rename = "scrobble")] pub scrobbles: Vec<ScrobbleResult>,
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -39,8 +39,8 @@ macro_rules! scrobble_part {
     ($name:ident, $type:ident $(, ($attrname:expr, $attrfield:ident, $attrtype:ident))+) => {
         #[derive(Debug, serde::Deserialize)]
         pub struct $name {
-            $(#[serde(rename = $attrname)] $attrfield: $attrtype,)+
-            #[serde(rename = "#text")] inner: $type,
+            $(#[serde(rename = $attrname)] pub $attrfield: $attrtype,)+
+            #[serde(rename = "#text")] pub inner: $type,
         }
         impl std::ops::Deref for $name {
             type Target = $type;
@@ -50,7 +50,7 @@ macro_rules! scrobble_part {
 
     ($name:ident, $type:ident) => {
         #[derive(Debug, serde::Deserialize)]
-        pub struct $name($type);
+        pub struct $name(pub $type);
         impl std::ops::Deref for $name {
             type Target = $type;
             fn deref(&self) -> &Self::Target { &self.0 }

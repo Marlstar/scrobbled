@@ -12,7 +12,8 @@ pub fn get_session(token: &OAuthToken) -> String {
 
 #[derive(serde::Deserialize, Debug)]
 pub struct Session {
-    pub name: String,
+    #[serde(rename = "name")]
+    pub username: String,
     pub key: String,
     pub subscriber: usize,
 }
