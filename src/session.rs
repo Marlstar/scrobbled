@@ -36,11 +36,14 @@ impl std::fmt::Display for SessionToken {
     }
 }
 
-#[derive(Debug, from_variants::FromVariants)]
+#[derive(Debug, from_variants::FromVariants, thiserror::Error)]
 pub enum SessionError {
+    #[error("error communicating with the API endpoint: {0:?}")]
     /// Error communicating with the API endpoint
     Reqwest(reqwest::Error),
-    /// Error with the API itself
+
+    #[error("error with the API response: {0:?}")]
+    /// Error with the API response
     API(APIError),
 }
 
