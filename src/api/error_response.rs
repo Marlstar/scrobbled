@@ -5,10 +5,10 @@ use serde::Deserialize;
 #[serde(rename = "error")]
 pub struct ErrorResponse {
     #[serde(rename = "@code", deserialize_with = "usize_to_error_code")]
-    code: APIErrorCode,
+    pub code: APIErrorCode,
 
     #[serde(rename = "#text")]
-    message: String,
+    pub message: String,
 }
 
 fn usize_to_error_code<'de, D>(de: D) -> Result<APIErrorCode, D::Error>

@@ -20,8 +20,6 @@ impl Session {
     }
     
     pub async fn scrobble(&self, scrobble: &Scrobble) -> SessionResult<Scrobbles> {
-        // type ScrobbleOutput = crate::api::APIResult<ScrobbleResult>;
-        // api::run_with_type!(track, scrobble, ScrobbleResult, ScrobbleOutput, post, &self.ws, scrobble, &self.token).await
         Ok(api::run!(track, scrobble, Scrobbles, post, &self.ws, scrobble, &self.token).await?)
     }
 }

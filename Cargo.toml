@@ -1,7 +1,7 @@
 [package]
 name = "scrobbled"
 description = "Rust bindings for the Last.fm API"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2024"
 authors = ["Marley <marley@marlstar.com>"]
 homepage = "https://github.com/Marlstar/scrobbled"
