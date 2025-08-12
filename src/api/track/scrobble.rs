@@ -7,7 +7,7 @@ pub fn scrobble(scrobble: &ActualScrobble, session: &SessionToken) -> String {
         .push("method", "track.scrobble")
         .push("track", &scrobble.track)
         .push("artist", &scrobble.artist)
-        .push("timestamp", scrobble.timestamp.to_utc().timestamp())
+        .push("timestamp", scrobble.timestamp.unwrap_or(chrono::Local::now()).to_utc().timestamp())
         .push_maybe("album", scrobble.album.as_ref())
         .push("sk", session)
         .push_api_key()
