@@ -17,8 +17,8 @@ pub use lfm::{Lfm, Status as LfmStatus};
 pub type Response<T> = Result<T, ErrorResponse>;
 
 #[macro_export]
-macro_rules! run_with_type {
-    ($namespace:ident, $method:ident, $sertype:path, $outtype:path, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {{
+macro_rules! run {
+    ($namespace:ident, $method:ident, $outtype:path, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {{
         let __inner__ = async || -> $crate::api::APIResult<$outtype> {
             let req = format!(
                 // raw=true removes the wrapper xml element showing the status
@@ -39,8 +39,8 @@ macro_rules! run_with_type {
                 // let text = result.text().await?;
                 let (wrapper, content) = $crate::api::remove_wrapper(&text);
 
-                let output: $crate::api::Response<$sertype> = match serde_xml_rs::from_str::<$crate::api::Lfm>(&wrapper)?.status {
-                    $crate::api::LfmStatus::Ok => Ok(serde_xml_rs::from_str::<$sertype>(&content)?),
+                let output: $crate::api::Response<$outtype> = match serde_xml_rs::from_str::<$crate::api::Lfm>(&wrapper)?.status {
+                    $crate::api::LfmStatus::Ok => Ok(serde_xml_rs::from_str::<$outtype>(&content)?),
                     $crate::api::LfmStatus::Failed => Err(serde_xml_rs::from_str::<$crate::api::ErrorResponse>(&content)?)
                 };
                 return Ok(output?);
@@ -51,13 +51,6 @@ macro_rules! run_with_type {
         };
         __inner__()
     }};
-} pub use run_with_type;
-
-#[macro_export]
-macro_rules! run {
-    ($namespace:ident, $method:ident, $outtype:path, $reqtype:ident, $ws:expr $(,$arg:expr)*) => {
-        $crate::api::run_with_type!($namespace, $method, $outtype, $outtype, $reqtype, $ws $(,$arg)*)
-    };
 } pub use run;
 
 pub fn remove_wrapper(text: &str) -> (String, String) {
