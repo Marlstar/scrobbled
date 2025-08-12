@@ -1,6 +1,6 @@
 use reqwest::Client;
 use crate::auth::OAuthToken;
-use crate::api::{self, APIError, ErrorResponse};
+use crate::api::{self, APIError};
 use crate::Scrobble;
 use crate::api::track::scrobble::Scrobbles;
 
