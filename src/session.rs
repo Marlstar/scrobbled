@@ -2,7 +2,10 @@ use reqwest::Client;
 use crate::auth::OAuthToken;
 use crate::api::{self, APIError};
 use crate::Scrobble;
-use crate::api::track::scrobble::Scrobbles;
+use crate::api::track::{
+    scrobble::Scrobbles,
+    update_now_playing::NowPlaying
+};
 
 #[derive(Debug)]
 /// The main handler for Last.fm API interaction.
@@ -24,6 +27,11 @@ impl Session {
     /// Scrobble a song to the authenticated user's Last.fm account
     pub async fn scrobble(&self, scrobble: &Scrobble) -> SessionResult<Scrobbles> {
         Ok(api::run!(track, scrobble, Scrobbles, post, &self.ws, scrobble, &self.token).await?)
+    }
+
+    // Update the authenticated user's now playing
+    pub async fn update_now_playing(&self, nowplaying: &Scrobble) -> SessionResult<NowPlaying> {
+        Ok(api::run!(track, update_now_playing, NowPlaying, post, &self.ws, nowplaying, &self.token).await?)
     }
 }
 
