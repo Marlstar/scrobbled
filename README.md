@@ -22,6 +22,17 @@ println!("{token}"); // abcde...
 ```
 This will open a tab in the user's default browser requesting permission to access their Last.fm account. Once they accept, they will be redirected to a page showing the token, which will automatically be received by `scrobbled` and returned to the caller. Users can close the tab without needing any further action.
 
+If you want to use an existing axum webserver for the token callback, you can do this with the `custom-callback` feature:
+```rust
+// Using scrobbled's "custom-callback" feature
+let router = axum::Router::new()
+    .route("/callback/path", scrobbled::auth::callback_router());
+// Run the webserver somewhere
+// Then to get a token
+let token = scrobbled::auth::get_token_with_callback("http://localhost:8080/callback/path").await.unwrap();
+println!("{token}"); // abcde...
+```
+
 ### Session
 Once we have a token, to get a session and start interacting with the API, create a `Session`:
 ```rust
