@@ -31,16 +31,17 @@ let session = Session::new(token).await.unwrap();
 // Ready to go =)
 ```
 
-## Scrobbling
+## Track Methods
+### Scrobbling
 Once authenticated, we can scrobble songs to the authenticated user's account. To do so, create a `Scrobble`:
 ```rust
 use scrobbled::Scrobble;
-let scrobble = Scrobble {
-    track: "In the End".to_string(),
-    artist: "Linkin Park".to_string(),
-    album: Some("Hybrid Theory".to_string()),
-    timestamp: scrobbled::chrono::Local::now(),
-};
+let scrobble = Scrobble::new(
+    "In the End",
+    "Linkin Park",
+    Some("Hybrid Theory"), // Or None
+    None // Optionally specify a timestamp here
+);
 ```
 To send this to Last.fm, pass your `Scrobble` to the `Session`:
 ```rust
@@ -48,4 +49,20 @@ let result = session.scrobble(&scrobble).await.unwrap();
 println!("{result:?}"); // scrobble result information
 ```
 If we now go over to Last.fm, we should see a successful scrobble!
-<img src="assets/lastfm_successful_scrobble.png" width=250px>
+<img src="assets/lastfm_successful_scrobble.png" width=350>
+
+### Update Now Playing
+Similarly to scrobbling, we can update the now-playing song on a user's Last.fm profile using a `Scrobble`:
+```rust
+use scrobbled::Scrobble;
+let nowplaying = Scrobble::new(
+    "In the End",
+    "Linkin Park",
+    Some("Hybrid Theory"), // Or None
+    None // No need to specify a timestamp for now-playing
+);
+
+let result = session.update_now_playing(&nowplaying).await.unwrap();
+println!("{result:?}"); // some information back from the API
+```
+<img src="assets/lastfm_now_playing.png" width=350>
