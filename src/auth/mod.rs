@@ -1,5 +1,7 @@
 pub mod handler;
 pub use handler::OAuthHandler;
+#[cfg(feature = "custom-callback")]
+pub use handler::callback_router;
 
 mod error;
 pub use error::OAuthError;
@@ -7,6 +9,12 @@ pub use error::OAuthError;
 pub async fn get_token() -> Result<OAuthToken, OAuthError> {
     OAuthHandler::builder().build().await
         .auth().await
+}
+
+#[cfg(feature = "custom-callback")]
+pub async fn get_token_with_callback(cb: &str) -> Result<OAuthToken, OAuthError> {
+    OAuthHandler::builder().build().await
+        .auth_custom(cb).await
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]

@@ -1,7 +1,7 @@
 [package]
 name = "scrobbled"
 description = "Rust bindings for the Last.fm API"
-version = "0.4.0"
+version = "0.5.0"
 edition = "2024"
 authors = ["Marley <marley@marlstar.com>"]
 homepage = "https://github.com/Marlstar/scrobbled"
@@ -11,7 +11,7 @@ license = "MIT"
 
 [dependencies]
 async-channel = "2.5.0"
-axum = "0.8.4"
+axum = { version = "0.8.4", optional = true }
 chrono = "0.4.41"
 from_variants = "1.0.2"
 md5 = "0.8.0"
@@ -21,3 +21,8 @@ serde = { version = "1.0.219", features = ["derive"] }
 serde-xml-rs = "0.8.1"
 thiserror = "2.0.12"
 tokio = { version = "1.47.1", features = ["net"] }
+
+[features]
+default = ["builtin-callback"]
+builtin-callback = ["dep:axum"]
+custom-callback = []
